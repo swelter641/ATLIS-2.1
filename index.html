@@ -1,10 +1,11 @@
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PIPELINE — Talent Sourcing Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>ATLIS 2.0 — Talent Engine Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-app: #FAFAFA;
@@ -19,10 +20,19 @@
     --brand-hover: #1D4ED8;
     --brand-light: #EFF6FF;
     
-    --loop-bg: #FEF3C7;
-    --loop-text: #D97706;
-    --market-bg: #ECFDF5;
-    --market-text: #059669;
+    /* Dedicated Stage Color Palettes */
+    --stage-sourced-bg: #F4F4F5;
+    --stage-sourced-text: #71717A;
+    --stage-screened-bg: #EFF6FF;
+    --stage-screened-text: #2563EB;
+    --stage-submitted-bg: #F5F3FF;
+    --stage-submitted-text: #7C3AED;
+    --stage-interview-bg: #FEF3C7;
+    --stage-interview-text: #D97706;
+    --stage-offer-bg: #ECFDF5;
+    --stage-offer-text: #059669;
+    --stage-passive-bg: #FFF1F2;
+    --stage-passive-text: #E11D48;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,7 +48,7 @@
 
   /* SIDEBAR */
   .sidebar {
-    width: 240px;
+    width: 250px;
     background: var(--bg-card);
     border-right: 1px solid var(--border);
     display: flex;
@@ -46,13 +56,13 @@
     position: sticky;
     top: 0;
     height: 100vh;
-    padding: 24px 16px;
+    padding: 28px 18px;
   }
 
-  .logo-block { margin-bottom: 32px; padding-left: 8px; }
-  .logo-title { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; color: var(--text-main); }
-  .logo-title span { color: var(--brand); }
-  .logo-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+  .logo-block { margin-bottom: 36px; padding-left: 6px; }
+  .logo-title { font-size: 22px; font-weight: 800; letter-spacing: -0.04em; color: var(--text-main); line-height: 1; }
+  .logo-title span { color: var(--brand); font-weight: 500; font-size: 14px; letter-spacing: -0.01em; margin-left: 4px; vertical-align: super; }
+  .logo-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 6px; }
 
   .nav-group { margin-bottom: 24px; }
   .nav-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; padding-left: 8px; margin-bottom: 8px; }
@@ -104,6 +114,34 @@
   .dashboard-pane { display: none; }
   .dashboard-pane.active { display: block; }
 
+  /* HOMEPAGE METRICS MATRIX */
+  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 32px; }
+  .metric-card { background: var(--bg-card); border: 1px solid var(--border); padding: 24px; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.01); }
+  .metric-lbl { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; }
+  .metric-val { font-size: 28px; font-weight: 700; color: var(--text-main); margin-top: 8px; letter-spacing: -0.03em; }
+  .metric-trend { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+
+  /* HOMEPAGE CORE LAYOUT PANELS */
+  .summary-layout-block { display: grid; grid-template-columns: 1fr 340px; gap: 24px; margin-bottom: 32px; }
+  @media(max-width: 1024px) { .summary-layout-block { grid-template-columns: 1fr; } }
+
+  .panel-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; }
+  .panel-card-title { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+  
+  /* PIE CHART OBJECTS */
+  .pie-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 12px 0; }
+  .css-pie-chart { width: 160px; height: 160px; border-radius: 50%; background: conic-gradient(var(--border) 0% 100%); margin-bottom: 20px; transition: background 0.3s ease; }
+  .pie-legend { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+  .legend-row { display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; }
+  .legend-lbl-group { display: flex; align-items: center; gap: 8px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* STAGNANCY LISTS */
+  .stagnant-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+  .stagnant-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .stagnant-row:first-child { padding-top: 0; }
+  .stagnant-alert-days { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #FFF1F2; color: #E11D48; }
+
   /* CONTROLS BAR */
   .bar-controls { display: flex; gap: 12px; margin-bottom: 24px; }
   .input-search { flex: 1; background: var(--bg-card); border: 1px solid var(--border); padding: 12px 16px; border-radius: 8px; font-size: 14px; outline: none; font-family: inherit; }
@@ -122,12 +160,14 @@
   .candidate-id-cell { font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
   .role-title-text { font-weight: 500; color: var(--text-main); }
   
-  /* PILLS & BADGES */
-  .badge-category { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
-  .badge-category.loop { background: var(--loop-bg); color: var(--loop-text); }
-  .badge-category.market { background: var(--market-bg); color: var(--market-text); }
-  
-  .badge-stage { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 500; background: var(--bg-hover); color: var(--text-main); border: 1px solid var(--border); }
+  /* PILLS & STAGE BADGES */
+  .badge-stage-pill { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.02em; }
+  .badge-stage-pill.sourced { background: var(--stage-sourced-bg); color: var(--stage-sourced-text); }
+  .badge-stage-pill.screened { background: var(--stage-screened-bg); color: var(--stage-screened-text); }
+  .badge-stage-pill.submitted { background: var(--stage-submitted-bg); color: var(--stage-submitted-text); }
+  .badge-stage-pill.interview { background: var(--stage-interview-bg); color: var(--stage-interview-text); }
+  .badge-stage-pill.offer { background: var(--stage-offer-bg); color: var(--stage-offer-text); }
+  .badge-stage-pill.passive { background: var(--stage-passive-bg); color: var(--stage-passive-text); }
   
   .pill-group { display: flex; flex-wrap: wrap; gap: 4px; max-width: 320px; }
   .pill-skill { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 2px 6px; background: var(--bg-hover); color: var(--text-muted); border-radius: 4px; border: 1px solid var(--border); }
@@ -138,7 +178,7 @@
   .btn-icon:hover { border-color: var(--brand); color: var(--brand); }
   .btn-icon.delete-type:hover { border-color: #EF4444; color: #EF4444; }
 
-  /* OVERLAYS & SLIDE-OUT PANELS */
+  /* FORMS & OVERLAYS */
   .panel-overlay { position: fixed; inset: 0; background: rgba(9, 9, 11, 0.2); backdrop-filter: blur(2px); z-index: 100; display: none; justify-content: center; align-items: center; }
   .panel-overlay.active { display: flex; }
   
@@ -174,7 +214,7 @@
   
   .inspect-body { padding: 24px; flex: 1; overflow-y: auto; }
   .inspect-section { margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 24px; }
-  .inspect-section:last-child { border-bottom: none; }
+  .inspect-section:last-child { border-bottom: none; padding-bottom: 0; }
   .inspect-section-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; color: var(--text-light); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.02em; }
   
   .inspect-data-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13.5px; }
@@ -185,11 +225,9 @@
   .log-meta { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-light); margin-bottom: 4px; }
   .log-text { color: var(--text-muted); line-height: 1.4; }
 
-  /* BLANK BENCHMARK STATE */
-  .state-empty { text-align: center; padding: 60px 20px; color: var(--text-light); }
-  .state-empty-icon { font-size: 28px; margin-bottom: 12px; color: var(--text-muted); }
-  .state-empty-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; }
-  .state-empty-desc { font-size: 13px; color: var(--text-muted); max-width: 280px; margin: 0 auto; }
+  .state-empty { text-align: center; padding: 40px 20px; color: var(--text-light); }
+  .state-empty-icon { font-size: 24px; margin-bottom: 8px; color: var(--text-muted); }
+  .state-empty-title { font-size: 14px; font-weight: 600; color: var(--text-main); }
 </style>
 </head>
 <body>
@@ -197,13 +235,20 @@
 <div class="app">
   <aside class="sidebar">
     <div class="logo-block">
-      <div class="logo-title">PIPE<span>LINE</span></div>
-      <div class="logo-sub">Talent Tracking</div>
+      <div class="logo-title">ATLIS<span>2.0</span></div>
+      <div class="logo-sub">Talent Tracking Engine</div>
     </div>
     
     <div class="nav-group">
+      <div class="nav-label">Overview</div>
+      <div class="nav-item active" onclick="switchRosterTab('overview', this)" id="tab-btn-overview">
+        <span>🏠 Hub Home</span>
+      </div>
+    </div>
+
+    <div class="nav-group">
       <div class="nav-label">Rosters</div>
-      <div class="nav-item active" onclick="switchRosterTab('loop', this)" id="tab-btn-loop">
+      <div class="nav-item" onclick="switchRosterTab('loop', this)" id="tab-btn-loop">
         <span>⚡ Active Loop</span>
         <span class="nav-counter" id="count-loop">0</span>
       </div>
@@ -229,14 +274,54 @@
   <main class="main-viewport">
     <div class="top-header">
       <div>
-        <h1 class="header-title" id="title-main-header">Active Loop</h1>
-        <p class="header-subtitle" id="desc-main-header">Candidates currently moving through active interview streams</p>
+        <h1 class="header-title" id="title-main-header">Hub Home</h1>
+        <p class="header-subtitle" id="desc-main-header">High-level operational metrics and pipeline balance overview</p>
       </div>
       <button class="btn-action" onclick="toggleFormModal(true)">+ Add Profile</button>
     </div>
 
     <div class="view-content">
-      <div class="dashboard-pane active" id="pane-roster-view">
+      
+      <div class="dashboard-pane active" id="pane-overview-view">
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-lbl">Added This Week</div>
+            <div class="metric-val" id="metric-added-week">0</div>
+            <div class="metric-trend">Profiles created past 7 days</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-lbl">Interview Rate</div>
+            <div class="metric-val" id="metric-interview-rate">0%</div>
+            <div class="metric-trend">Of active loop in process</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-lbl">Active Roster Size</div>
+            <div class="metric-val" id="metric-total-active">0</div>
+            <div class="metric-trend">Total ongoing dependencies</div>
+          </div>
+        </div>
+
+        <div class="summary-layout-block">
+          <div class="panel-card">
+            <div class="panel-card-title">
+              <span>⚠️ Status Stagnancy Watchlist</span>
+              <span style="font-size:12px; font-weight:normal; color:var(--text-muted);">Days since last stage shift</span>
+            </div>
+            <div id="stagnant-list-container" style="flex:1;">
+              </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-card-title">Stage Distribution</div>
+            <div class="pie-wrapper">
+              <div class="css-pie-chart" id="pie-chart-graphic"></div>
+              <div class="pie-legend" id="pie-chart-legend"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-pane" id="pane-roster-view">
         <div class="bar-controls">
           <input type="text" class="input-search" id="search-bar" placeholder="Filter by initials, keywords, specialized track tags..." oninput="drawRosterUI()">
           <select class="select-filter" id="filter-region-dropdown" onchange="drawRosterUI()">
@@ -348,6 +433,7 @@
       <div class="inspect-data-row"><span class="inspect-label">Roster Placement:</span><span class="inspect-val" id="inspect-val-category">-</span></div>
       <div class="inspect-data-row"><span class="inspect-label">Workflow Stage:</span><span class="inspect-val" id="inspect-val-stage">-</span></div>
       <div class="inspect-data-row"><span class="inspect-label">Location Parameters:</span><span class="inspect-val" id="inspect-val-location">-</span></div>
+      <div class="inspect-data-row"><span class="inspect-label">Last Engagement:</span><span class="inspect-val" id="inspect-val-last-touch" style="font-family:'JetBrains Mono', monospace; font-size:12px;">-</span></div>
     </div>
     <div class="inspect-section">
       <h4 class="inspect-section-title">Technical Expertise Fields</h4>
@@ -369,18 +455,20 @@
 </div>
 
 <script>
-  let DB = {
-    profiles: [],
-    logs: []
-  };
-
-  let activeRosterTab = 'loop'; // 'loop', 'market', or 'activity'
+  let DB = { profiles: [], logs: [] };
+  let activeRosterTab = 'overview'; // 'overview', 'loop', 'market', or 'activity'
   let inspectingProfileUuid = null;
+
+  const STAGE_COLORS = {
+    'Sourced': '#71717A', 'Screened': '#2563EB', 'Submitted': '#7C3AED',
+    'Interview': '#D97706', 'Offer': '#059669', 'Passive': '#E11D48'
+  };
 
   // ─── LOCALSTORAGE CONTROLS ─────────────────────────────────────────────────
   function saveDatabaseState() {
     localStorage.setItem('pipeline_talent_db', JSON.stringify(DB));
     updateCountersMetric();
+    if(activeRosterTab === 'overview') drawOverviewHomeUI();
   }
 
   function loadDatabaseState() {
@@ -388,65 +476,64 @@
     if (raw) {
       try {
         DB = JSON.parse(raw);
-        // Ensure legacy fields don't corrupt runtime execution
         if (!DB.profiles) DB.profiles = [];
         if (!DB.logs) DB.logs = [];
-      } catch(e) {
-        generateMockDatabase();
-      }
-    } else {
-      generateMockDatabase();
-    }
+      } catch(e) { generateMockDatabase(); }
+    } else { generateMockDatabase(); }
     updateCountersMetric();
     rebuildLocationDropdownOptions();
   }
 
   function generateMockDatabase() {
+    const now = Date.now();
     DB = {
       profiles: [
-        { uuid: 'p1', code: 'John D.', track: 'Azure Data Engineer', category: 'loop', stage: 'Interview', location: 'Prince George - Onsite', skills: ['Azure', 'Databricks', 'Snowflake', 'Python'], notes: 'Open to onsite alignment targets, strong core infrastructure layer developer build processes.', created: Date.now() },
-        { uuid: 'p2', code: 'Alex M.', track: 'Cloud Security Architect', category: 'loop', stage: 'Submitted', location: 'Vancouver - Hybrid', skills: ['Azure', 'AWS', 'Security', 'Terraform'], notes: 'Seeking 150k threshold markers, extensive background handling automation parameters.', created: Date.now() - 50000 },
-        { uuid: 'p3', code: 'Chris R.', track: 'Senior DevOps Architect', category: 'market', stage: 'Passive', location: 'Remote', skills: ['AWS', 'Kubernetes', 'CI/CD', 'Security'], notes: 'Passive benchmark tracking candidate, elite track architecture history profiles.', created: Date.now() - 100000 }
+        { uuid: 'p1', code: 'John D.', track: 'Azure Data Engineer', category: 'loop', stage: 'Interview', location: 'Prince George - Onsite', skills: ['Azure', 'Databricks', 'Snowflake'], notes: 'Targeting 145k markers.', created: now - (2 * 24 * 60 * 60 * 1000), statusChanged: now - (2 * 24 * 60 * 60 * 1000) },
+        { uuid: 'p2', code: 'Alex M.', track: 'Cloud Security Architect', category: 'loop', stage: 'Submitted', location: 'Vancouver - Hybrid', skills: ['Azure', 'Security'], notes: 'Open to quick commute arrays.', created: now - (12 * 24 * 60 * 60 * 1000), statusChanged: now - (8 * 24 * 60 * 60 * 1000) },
+        { uuid: 'p3', code: 'Chris R.', track: 'Senior DevOps Lead', category: 'market', stage: 'Passive', location: 'Remote', skills: ['AWS', 'Kubernetes'], notes: 'Top reference passive pool asset.', created: now - (4 * 24 * 60 * 60 * 1000), statusChanged: now - (4 * 24 * 60 * 60 * 1000) }
       ],
       logs: [
-        { uuid: 'l1', profileUuid: 'p1', timestamp: Date.now() - 20000, text: 'Completed functional screening validation cycle.' },
-        { uuid: 'l2', profileUuid: 'p2', timestamp: Date.now() - 40000, text: 'Submitted profile to retail infrastructure stream.' }
+        { uuid: 'l1', profileUuid: 'p1', timestamp: now - (1 * 24 * 60 * 60 * 1000), text: 'Logged technical verification notes.' },
+        { uuid: 'l2', profileUuid: 'p2', timestamp: now - (8 * 24 * 60 * 60 * 1000), text: 'Initial deployment tracking initialized.' }
       ]
     };
     saveDatabaseState();
   }
 
-  // ─── NAVIGATION WORKFLOWS ──────────────────────────────────────────────────
+  // ─── NAVIGATION MANAGER ───────────────────────────────────────────────────
   function switchRosterTab(targetTab, elementsRef) {
     activeRosterTab = targetTab;
-    
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    if (elementsRef) {
-      elementsRef.classList.add('active');
-    } else {
-      if(targetTab === 'loop') document.getElementById('tab-btn-loop').classList.add('active');
-      if(targetTab === 'market') document.getElementById('tab-btn-market').classList.add('active');
-      if(targetTab === 'activity') document.getElementById('tab-btn-activity').classList.add('active');
+    
+    if (elementsRef) { elementsRef.classList.add('active'); } 
+    else {
+      document.getElementById(`tab-btn-${targetTab}`).classList.add('active');
     }
 
     const headerTitle = document.getElementById('title-main-header');
     const headerDesc = document.getElementById('desc-main-header');
+    const homePane = document.getElementById('pane-overview-view');
     const rosterPane = document.getElementById('pane-roster-view');
     const activityPane = document.getElementById('pane-activity-log-view');
     const filterStageBox = document.getElementById('filter-specific-stage');
 
     closeInspectSlideout();
+    homePane.classList.remove('active');
+    rosterPane.classList.remove('active');
+    activityPane.classList.remove('active');
 
-    if (targetTab === 'activity') {
+    if (targetTab === 'overview') {
+      headerTitle.innerText = "Hub Home";
+      headerDesc.innerText = "High-level operational metrics and pipeline balance overview";
+      homePane.classList.add('active');
+      drawOverviewHomeUI();
+    } else if (targetTab === 'activity') {
       headerTitle.innerText = "Interaction History";
       headerDesc.innerText = "Historical ledger chronological timeline audit entries";
-      rosterPane.classList.remove('active');
       activityPane.classList.add('active');
       drawGlobalActivityLogUI();
     } else {
       rosterPane.classList.add('active');
-      activityPane.classList.remove('active');
-      
       if (targetTab === 'loop') {
         headerTitle.innerText = "Active Loop";
         headerDesc.innerText = "Candidates currently moving through active interview streams";
@@ -461,26 +548,96 @@
   }
 
   function updateCountersMetric() {
-    const activeLoopCount = DB.profiles.filter(p => p.category === 'loop').length;
-    const marketPoolCount = DB.profiles.filter(p => p.category === 'market').length;
-    
-    document.getElementById('count-loop').innerText = activeLoopCount;
-    document.getElementById('count-market').innerText = marketPoolCount;
+    document.getElementById('count-loop').innerText = DB.profiles.filter(p => p.category === 'loop').length;
+    document.getElementById('count-market').innerText = DB.profiles.filter(p => p.category === 'market').length;
   }
 
   function rebuildLocationDropdownOptions() {
     const dropdown = document.getElementById('filter-region-dropdown');
     const savedVal = dropdown.value;
     const uniqueLocations = [...new Set(DB.profiles.map(p => p.location).filter(Boolean))];
-    
     dropdown.innerHTML = '<option value="">All Locations</option>';
     uniqueLocations.sort().forEach(loc => {
-      const opt = document.createElement('option');
-      opt.value = loc;
-      opt.innerText = loc;
-      dropdown.appendChild(opt);
+      const opt = document.createElement('option'); opt.value = loc; opt.innerText = loc; dropdown.appendChild(opt);
     });
     dropdown.value = savedVal;
+  }
+
+  // ─── HOMEPAGE CALCULATIONS ENGINE ──────────────────────────────────────────
+  function drawOverviewHomeUI() {
+    const now = Date.now();
+    const sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
+    
+    // 1. Crunch Matrix Cards
+    const addedThisWeek = DB.profiles.filter(p => (p.created || 0) >= sevenDaysAgo).length;
+    const activeProfiles = DB.profiles.filter(p => p.category === 'loop');
+    const interviewCount = activeProfiles.filter(p => p.stage === 'Interview').length;
+    const interviewRate = activeProfiles.length ? Math.round((interviewCount / activeProfiles.length) * 100) : 0;
+
+    document.getElementById('metric-added-week').innerText = addedThisWeek;
+    document.getElementById('metric-interview-rate').innerText = `${interviewRate}%`;
+    document.getElementById('metric-total-active').innerText = activeProfiles.length;
+
+    // 2. Build Stagnancy watchlist
+    const stagnantContainer = document.getElementById('stagnant-list-container');
+    if (DB.profiles.length === 0) {
+      stagnantContainer.innerHTML = '<div class="state-empty"><div class="state-empty-title">Pipeline completely clear</div></div>';
+    } else {
+      let sortedStagnant = [...DB.profiles].map(p => {
+        const deltaMs = now - (p.statusChanged || p.created || now);
+        return { ...p, daysStagnant: Math.floor(deltaMs / (24 * 60 * 60 * 1000)) };
+      }).sort((a,b) => b.daysStagnant - a.daysStagnant).slice(0, 5);
+
+      stagnantContainer.innerHTML = sortedStagnant.map(p => `
+        <div class="stagnant-row" onclick="openInspectSlideout('${p.uuid}')" style="cursor:pointer;">
+          <div>
+            <span style="font-weight:600;">${escapeHtml(p.code)}</span> 
+            <span style="color:var(--text-muted); font-size:13px;">— ${escapeHtml(p.track)}</span>
+            <div style="margin-top:2px;"><span class="badge-stage-pill ${p.stage.toLowerCase()}">${p.stage}</span></div>
+          </div>
+          <span class="stagnant-alert-days">${p.daysStagnant}d stagnant</span>
+        </div>
+      `).join('');
+    }
+
+    // 3. Compile Distribution Chart Math
+    const counts = { Sourced: 0, Screened: 0, Submitted: 0, Interview: 0, Offer: 0, Passive: 0 };
+    DB.profiles.forEach(p => { if(counts[p.stage] !== undefined) counts[p.stage]++; });
+    
+    const total = DB.profiles.length;
+    const chart = document.getElementById('pie-chart-graphic');
+    const legend = document.getElementById('pie-chart-legend');
+    
+    if(total === 0) {
+      chart.style.background = 'var(--border)';
+      legend.innerHTML = '<p style="text-align:center; font-size:12px; color:var(--text-light)">No entries recorded</p>';
+      return;
+    }
+
+    let accumulatedPercentage = 0;
+    const gradientSlices = [];
+    let legendHtml = '';
+
+    for (const [stage, count] of Object.entries(counts)) {
+      const pct = Math.round((count / total) * 100);
+      if (count > 0) {
+        const color = STAGE_COLORS[stage];
+        gradientSlices.push(`${color} ${accumulatedPercentage}% ${accumulatedPercentage + pct}%`);
+        accumulatedPercentage += pct;
+      }
+      
+      legendHtml += `
+        <div class="legend-row">
+          <div class="legend-lbl-group">
+            <div class="legend-dot" style="background:${STAGE_COLORS[stage]};"></div>
+            <span style="color:var(--text-muted); font-weight:500;">${stage}</span>
+          </div>
+          <span style="font-weight:600; color:var(--text-main);">${count} <span style="font-weight:normal; color:var(--text-light); font-size:11px;">(${pct}%)</span></span>
+        </div>`;
+    }
+
+    chart.style.background = `conic-gradient(${gradientSlices.join(', ')})`;
+    legend.innerHTML = legendHtml;
   }
 
   // ─── UI INTERFACE RENDERING ENGINE ──────────────────────────────────────────
@@ -498,12 +655,9 @@
       if (activeRosterTab === 'loop' && stageFilter && p.stage !== stageFilter) return false;
       
       if (query) {
-        const matchCode = p.code.toLowerCase().includes(query);
-        const matchTrack = p.track.toLowerCase().includes(query);
-        const matchLoc = p.location.toLowerCase().includes(query);
-        const matchNotes = p.notes.toLowerCase().includes(query);
-        const matchSkills = p.skills.some(s => s.toLowerCase().includes(query));
-        return (matchCode || matchTrack || matchLoc || matchNotes || matchSkills);
+        return (p.code.toLowerCase().includes(query) || p.track.toLowerCase().includes(query) ||
+                p.location.toLowerCase().includes(query) || p.notes.toLowerCase().includes(query) ||
+                p.skills.some(s => s.toLowerCase().includes(query)));
       }
       return true;
     });
@@ -513,30 +667,23 @@
         <div class="state-empty">
           <div class="state-empty-icon">⬡</div>
           <div class="state-empty-title">No anonymous records found</div>
-          <div class="state-empty-desc">Adjust filter parameters or create a new clear tracking profile entry.</div>
         </div>
       </td></tr>`;
       return;
     }
 
-    // Sort matching profiles reverse chronological
     filtered.sort((a,b) => (b.created || 0) - (a.created || 0));
 
     filtered.forEach(p => {
       const tr = document.createElement('tr');
-      tr.onclick = (e) => {
-        if (e.target.closest('button') || e.target.closest('label')) return;
-        openInspectSlideout(p.uuid);
-      };
-
-      // Generate skills tags list html
+      tr.onclick = (e) => { if (!e.target.closest('button')) openInspectSlideout(p.uuid); };
       const skillHtml = p.skills.slice(0,4).map(s => `<span class="pill-skill">${escapeHtml(s)}</span>`).join('');
 
       tr.innerHTML = `
         <td><div class="candidate-id-cell"><span>📇</span> ${escapeHtml(p.code)}</div></td>
         <td><div class="role-title-text">${escapeHtml(p.track)}</div></td>
         <td><span style="color: var(--text-muted); font-size:13.5px;">${escapeHtml(p.location || 'Unspecified')}</span></td>
-        <td><span class="badge-category ${p.category === 'loop' ? 'loop' : 'market'}">${escapeHtml(p.stage)}</span></td>
+        <td><span class="badge-stage-pill ${p.stage.toLowerCase()}">${escapeHtml(p.stage)}</span></td>
         <td><div class="pill-group">${skillHtml}</div></td>
         <td>
           <div class="actions-cell">
@@ -552,12 +699,7 @@
   function drawGlobalActivityLogUI() {
     const container = document.getElementById('global-activity-container');
     if (DB.logs.length === 0) {
-      container.innerHTML = `
-        <div class="state-empty">
-          <div class="state-empty-icon">📋</div>
-          <div class="state-empty-title">History Clear</div>
-          <div class="state-empty-desc">Chronological logging markers show up here once adjustments or timeline tracking rows execute.</div>
-        </div>`;
+      container.innerHTML = '<div class="state-empty"><div class="state-empty-title">History Clear</div></div>';
       return;
     }
 
@@ -567,32 +709,24 @@
     sortedLogs.forEach(l => {
       const parentProfile = DB.profiles.find(p => p.uuid === l.profileUuid);
       const profileLabel = parentProfile ? `${parentProfile.code} (${parentProfile.track})` : 'Removed Profile Ref';
-      const timeStr = new Date(l.timestamp).toLocaleString();
-      
       html += `
         <div class="log-entry-bubble">
           <div class="log-meta">
             <span style="font-weight:600; color:var(--brand);">${escapeHtml(profileLabel)}</span>
-            <span>${timeStr}</span>
+            <span>${new Date(l.timestamp).toLocaleString()}</span>
           </div>
           <div class="log-text">${escapeHtml(l.text)}</div>
         </div>`;
     });
-    html += `</div>`;
-    container.innerHTML = html;
+    container.innerHTML = html + `</div>`;
   }
 
   // ─── INPUT DATA MODAL FORM PROCESSING CONTROLS ──────────────────────────────
   function toggleFormModal(shouldShow, titleText = "Create Anonymous Profile") {
     const modal = document.getElementById('overlay-form-modal');
     document.getElementById('form-modal-title').innerText = titleText;
-    
-    if (shouldShow) {
-      modal.classList.add('active');
-    } else {
-      modal.classList.remove('active');
-      clearFormFields();
-    }
+    if (shouldShow) { modal.classList.add('active'); } 
+    else { modal.classList.remove('active'); clearFormFields(); }
   }
 
   function syncFormStageDropdown() {
@@ -609,9 +743,7 @@
         <option value="Offer">Offer</option>
       `;
     } else {
-      stageSelect.innerHTML = `
-        <option value="Passive">Passive Benchmark</option>
-      `;
+      stageSelect.innerHTML = `<option value="Passive">Passive Benchmark</option>`;
     }
     if (savedVal) stageSelect.value = savedVal;
   }
@@ -620,7 +752,7 @@
     document.getElementById('form-profile-uuid').value = '';
     document.getElementById('field-initials').value = '';
     document.getElementById('field-role').value = '';
-    document.getElementById('field-category').value = activeRosterTab === 'activity' ? 'loop' : activeRosterTab;
+    document.getElementById('field-category').value = (activeRosterTab === 'overview' || activeRosterTab === 'activity') ? 'loop' : activeRosterTab;
     syncFormStageDropdown();
     document.getElementById('field-location').value = '';
     document.getElementById('field-skills').value = '';
@@ -634,52 +766,33 @@
     const catVal = document.getElementById('field-category').value;
     const stageVal = document.getElementById('field-stage').value;
     const locVal = document.getElementById('field-location').value.trim() || 'Remote';
-    const rawSkills = document.getElementById('field-skills').value;
+    const parsedSkills = document.getElementById('field-skills').value.split(',').map(s => s.trim()).filter(Boolean);
     const notesVal = document.getElementById('field-notes').value.trim();
-
-    // Parse array sequence from raw comma text line inputs
-    const parsedSkills = rawSkills.split(',').map(s => s.trim()).filter(Boolean);
+    const now = Date.now();
 
     if (uuidInput) {
-      // Edit mode logic sequence paths
       const existing = DB.profiles.find(p => p.uuid === uuidInput);
       if (existing) {
-        const changeDesc = `Modified structural config variables [Track: ${roleVal}, Category: ${catVal}, Stage: ${stageVal}].`;
-        existing.code = codeVal;
-        existing.track = roleVal;
-        existing.category = catVal;
-        existing.stage = stageVal;
-        existing.location = locVal;
-        existing.skills = parsedSkills;
-        existing.notes = notesVal;
-        
-        DB.logs.push({ uuid: makeUuid(), profileUuid: existing.uuid, timestamp: Date.now(), text: changeDesc });
+        if(existing.stage !== stageVal || existing.category !== catVal) {
+          existing.statusChanged = now;
+        }
+        existing.code = codeVal; existing.track = roleVal; existing.category = catVal;
+        existing.stage = stageVal; existing.location = locVal; existing.skills = parsedSkills; existing.notes = notesVal;
+        DB.logs.push({ uuid: makeUuid(), profileUuid: existing.uuid, timestamp: now, text: `Modified profile parameters [Track: ${roleVal}, Stage: ${stageVal}].` });
       }
     } else {
-      // Create fresh asset track instances
       const newUuid = makeUuid();
       DB.profiles.push({
-        uuid: newUuid,
-        code: codeVal,
-        track: roleVal,
-        category: catVal,
-        stage: stageVal,
-        location: locVal,
-        skills: parsedSkills,
-        notes: notesVal,
-        created: Date.now()
+        uuid: newUuid, code: codeVal, track: roleVal, category: catVal, stage: stageVal,
+        location: locVal, skills: parsedSkills, notes: notesVal, created: now, statusChanged: now
       });
-      DB.logs.push({ uuid: makeUuid(), profileUuid: newUuid, timestamp: Date.now(), text: 'Initialized system profile index file deployment.' });
+      DB.logs.push({ uuid: makeUuid(), profileUuid: newUuid, timestamp: now, text: 'Initialized system profile index entry configuration.' });
     }
 
     saveDatabaseState();
     rebuildLocationDropdownOptions();
     toggleFormModal(false);
-    
-    // Redirect context view matching structural configuration
-    if (activeRosterTab !== 'activity') {
-      activeRosterTab = catVal;
-    }
+    if (activeRosterTab !== 'overview' && activeRosterTab !== 'activity') activeRosterTab = catVal;
     switchRosterTab(activeRosterTab);
   }
 
@@ -703,16 +816,13 @@
 
   function triggerProfileDeletion(uuid, event) {
     if(event) event.stopPropagation();
-    if(!confirm("Purge tracking reference completely? Ensure local database backup states verify pipeline safety layers.")) return;
-    
+    if(!confirm("Purge pipeline tracking row reference?")) return;
     DB.profiles = DB.profiles.filter(p => p.uuid !== uuid);
-    DB.logs = DB.logs.filter(l => l.profileUuid !== uuid); // Clean dangling entry parameters
-    
+    DB.logs = DB.logs.filter(l => l.profileUuid !== uuid);
     if (inspectingProfileUuid === uuid) closeInspectSlideout();
-    
     saveDatabaseState();
     rebuildLocationDropdownOptions();
-    if (activeRosterTab === 'activity') drawGlobalActivityLogUI(); else drawRosterUI();
+    if (activeRosterTab === 'activity') drawGlobalActivityLogUI(); else if(activeRosterTab === 'overview') drawOverviewHomeUI(); else drawRosterUI();
   }
 
   // ─── INSPECTION SIDE PANEL OPERATIONS ──────────────────────────────────────
@@ -723,13 +833,15 @@
     inspectingProfileUuid = uuid;
     document.getElementById('inspect-headline-code').innerText = p.code;
     document.getElementById('inspect-subheadline-track').innerText = p.track;
-    document.getElementById('inspect-val-category').innerText = p.category === 'loop' ? '⚡ Active Loop Processes' : '💎 Top Market Asset Pool';
+    document.getElementById('inspect-val-category').innerText = p.category === 'loop' ? '⚡ Active Loop Dependencies' : '💎 Top Market Pool';
     document.getElementById('inspect-val-stage').innerText = p.stage;
     document.getElementById('inspect-val-location').innerText = p.location;
-    document.getElementById('inspect-val-notes').innerText = p.notes || 'No custom track parameter overrides noted.';
+    document.getElementById('inspect-val-notes').innerText = p.notes || 'No track preferences detailed.';
     
-    const skillsContainer = document.getElementById('inspect-val-skills');
-    skillsContainer.innerHTML = p.skills.map(s => `<span class="pill-skill" style="font-size:12px; padding:4px 8px;">${escapeHtml(s)}</span>`).join('');
+    document.getElementById('inspect-val-skills').innerHTML = p.skills.map(s => `<span class="pill-skill" style="font-size:12px; padding:4px 8px;">${escapeHtml(s)}</span>`).join('');
+
+    const profileLogs = DB.logs.filter(l => l.profileUuid === uuid).sort((a,b) => b.timestamp - a.timestamp);
+    document.getElementById('inspect-val-last-touch').innerText = profileLogs.length ? new Date(profileLogs[0].timestamp).toLocaleDateString() : 'No recorded interactions';
 
     drawProfileHistoryTimelineLogs(uuid);
     document.getElementById('panel-inspect-slideout').classList.add('active');
@@ -745,7 +857,7 @@
     const profileHistory = DB.logs.filter(l => l.profileUuid === profileUuid).sort((a,b) => b.timestamp - a.timestamp);
     
     if (profileHistory.length === 0) {
-      container.innerHTML = `<p style="font-size:12px; color:var(--text-light); padding:8px 0;">No active history milestones logged.</p>`;
+      container.innerHTML = `<p style="font-size:12px; color:var(--text-light); padding:8px 0;">No milestones logged.</p>`;
       return;
     }
 
@@ -763,19 +875,13 @@
     const textVal = input.value.trim();
     if (!textVal) return;
 
-    DB.logs.push({
-      uuid: makeUuid(),
-      profileUuid: inspectingProfileUuid,
-      timestamp: Date.now(),
-      text: textVal
-    });
-
+    DB.logs.push({ uuid: makeUuid(), profileUuid: inspectingProfileUuid, timestamp: Date.now(), text: textVal });
     saveDatabaseState();
     drawProfileHistoryTimelineLogs(inspectingProfileUuid);
     input.value = '';
   }
 
-  // ─── UTILITY ENGINES ───────────────────────────────────────────────────────
+  // ─── UTILITY DATA ROUTINES ────────────────────────────────────────────────
   function makeUuid() { return Math.random().toString(36).substring(2, 11) + Date.now().toString(36); }
   function escapeHtml(str) { if(!str) return ''; return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
 
@@ -783,47 +889,29 @@
     const blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = `pipeline_anonymous_tracker_${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    a.href = url; a.download = `atlis_2_database_${new Date().toISOString().slice(0,10)}.json`;
+    a.click(); URL.revokeObjectURL(url);
   }
 
   function triggerJsonImport(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    const file = event.target.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
       try {
         const parsed = JSON.parse(e.target.result);
         if (parsed.profiles && parsed.logs) {
-          DB = parsed;
-          saveDatabaseState();
-          rebuildLocationDropdownOptions();
-          switchRosterTab(activeRosterTab);
-          alert("Talent database mapping structural arrays array synced successfully.");
-        } else {
-          alert("Validation failure. Structure lacks valid functional tracking arrays.");
-        }
-      } catch(err) {
-        alert("Parser exception. File is corrupt or incorrectly mapped.");
-      }
+          DB = parsed; saveDatabaseState(); rebuildLocationDropdownOptions(); switchRosterTab(activeRosterTab);
+          alert("Talent engine database synced successfully.");
+        } else { alert("Sync error: Structure signature invalid."); }
+      } catch(err) { alert("File processing exception."); }
     };
     reader.readAsText(file);
   }
 
-  // ─── RUNTIME RECOVERY BOOTSTRAPPING ────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
     loadDatabaseState();
-    switchRosterTab('loop');
-    
-    // Add escape keyboard intercept to pull down layouts smoothly
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        toggleFormModal(false);
-        closeInspectSlideout();
-      }
-    });
+    switchRosterTab('overview');
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { toggleFormModal(false); closeInspectSlideout(); } });
   });
 </script>
 </body>
