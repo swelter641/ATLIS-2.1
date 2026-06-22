@@ -27,18 +27,14 @@
     --shadow-card-hover: 0 4px 10px rgba(76,29,149,0.05), 0 16px 32px -12px rgba(76,29,149,0.14);
 
     /* Premium Recruitment Stage Color Codes */
-    --stage-sourced-bg: #F1F0F5;
-    --stage-sourced-text: #6B6480;
-    --stage-screened-bg: #EFF1FE;
-    --stage-screened-text: #4F46E5;
-    --stage-submitted-bg: #F3EEFD;
-    --stage-submitted-text: #7C3AED;
+    --stage-subbed-bg: #F3EEFD;
+    --stage-subbed-text: #7C3AED;
     --stage-interview-bg: #FEF3E2;
     --stage-interview-text: #D97706;
-    --stage-offer-bg: #ECFDF5;
-    --stage-offer-text: #059669;
-    --stage-passive-bg: #FFF1F2;
-    --stage-passive-text: #E11D48;
+    --stage-final-bg: #EFF1FE;
+    --stage-final-text: #4F46E5;
+    --stage-pending-bg: #F1F0F5;
+    --stage-pending-text: #6B6480;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -183,12 +179,10 @@
   
   /* COLOR STATUS PILLS */
   .badge-stage-pill { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.02em; }
-  .badge-stage-pill.sourced { background: var(--stage-sourced-bg); color: var(--stage-sourced-text); }
-  .badge-stage-pill.screened { background: var(--stage-screened-bg); color: var(--stage-screened-text); }
-  .badge-stage-pill.submitted { background: var(--stage-submitted-bg); color: var(--stage-submitted-text); }
+  .badge-stage-pill.subbed { background: var(--stage-subbed-bg); color: var(--stage-subbed-text); }
   .badge-stage-pill.interview { background: var(--stage-interview-bg); color: var(--stage-interview-text); }
-  .badge-stage-pill.offer { background: var(--stage-offer-bg); color: var(--stage-offer-text); }
-  .badge-stage-pill.passive { background: var(--stage-passive-bg); color: var(--stage-passive-text); }
+  .badge-stage-pill.final_interview { background: var(--stage-final-bg); color: var(--stage-final-text); }
+  .badge-stage-pill.pending_feedback { background: var(--stage-pending-bg); color: var(--stage-pending-text); }
   
   .pill-group { display: flex; flex-wrap: wrap; gap: 4px; max-width: 320px; }
   .pill-skill { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 2px 7px; background: var(--bg-hover); color: var(--brand-deep); border-radius: 6px; border: 1px solid var(--border); }
@@ -266,7 +260,7 @@
   .view-mode-toggle { display:flex; gap:6px; background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:4px; box-shadow:var(--shadow-card); }
   .toggle-btn { border:none; background:transparent; color:var(--text-muted); border-radius:8px; padding:8px 12px; font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer; }
   .toggle-btn.active { background:var(--brand); color:#fff; box-shadow:0 4px 10px -4px rgba(124,58,237,0.55); }
-  .kanban-board { display:none; grid-template-columns: repeat(5, minmax(210px, 1fr)); gap:14px; overflow-x:auto; padding-bottom:8px; }
+  .kanban-board { display:none; grid-template-columns: repeat(4, minmax(210px, 1fr)); gap:14px; overflow-x:auto; padding-bottom:8px; }
   .kanban-board.active { display:grid; }
   .kanban-column { background:rgba(255,255,255,0.62); border:1px solid var(--border); border-radius:16px; min-height:360px; padding:12px; box-shadow:var(--shadow-card); }
   .kanban-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; font-size:13px; font-weight:800; }
@@ -339,7 +333,7 @@
         <div class="panel-card" style="margin-bottom:24px;">
           <div class="panel-card-title">
             <span>🔥 Needs Attention</span>
-            <span style="font-size:12px; font-weight:normal; color:var(--text-muted);">Highest priority profiles based on stage age and last interaction</span>
+            <span style="font-size:12px; font-weight:normal; color:var(--text-muted);">Highest priority active pipeline records (Excludes Top Market Talent)</span>
           </div>
           <div class="attention-grid" id="needs-attention-container"></div>
         </div>
@@ -353,9 +347,9 @@
           </div>
           <div class="metric-card">
             <div class="metric-icon-badge">🎯</div>
-            <div class="metric-lbl">Interview Rate</div>
+            <div class="metric-lbl">Active Interview Density</div>
             <div class="metric-val" id="metric-interview-rate">0%</div>
-            <div class="metric-trend">Of active loop in process</div>
+            <div class="metric-trend">Of active loop in late-stage streams</div>
           </div>
           <div class="metric-card">
             <div class="metric-icon-badge">📊</div>
@@ -393,11 +387,10 @@
           </select>
           <select class="select-filter" id="filter-specific-stage" onchange="drawRosterUI()">
             <option value="">All Status Stages</option>
-            <option value="Sourced">Sourced</option>
-            <option value="Screened">Screened</option>
-            <option value="Submitted">Submitted</option>
+            <option value="Subbed">Subbed</option>
             <option value="Interview">Interview</option>
-            <option value="Offer">Offer</option>
+            <option value="Final_Interview">Final Interview</option>
+            <option value="Pending_Feedback">Pending Feedback</option>
           </select>
           <div class="view-mode-toggle">
             <button class="toggle-btn active" id="toggle-table-view" onclick="setRosterViewMode('table')">Table</button>
@@ -467,12 +460,10 @@
         <div class="form-group">
           <label class="form-label">Process Stage State</label>
           <select class="field-select" id="field-stage">
-            <option value="Sourced">Sourced</option>
-            <option value="Screened">Screened</option>
-            <option value="Submitted">Submitted</option>
+            <option value="Subbed">Subbed</option>
             <option value="Interview">Interview</option>
-            <option value="Offer">Offer</option>
-            <option value="Passive">Passive</option>
+            <option value="Final_Interview">Final Interview</option>
+            <option value="Pending_Feedback">Pending Feedback</option>
           </select>
         </div>
       </div>
@@ -484,6 +475,12 @@
         <div class="form-group">
           <label class="form-label">Skills Stack Keywords</label>
           <input type="text" class="field-input" id="field-skills" placeholder="e.g. Azure, Cloud, Databricks, Security">
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label class="form-label">Interview Process Detail / Granular Context Tracker</label>
+          <textarea class="field-area" id="field-interview-context" placeholder="e.g. First round completed on 06/12. Client loved the technical depth. Final panel loop scheduling pending for late next week..."></textarea>
         </div>
       </div>
       <div class="form-row full">
@@ -517,6 +514,10 @@
       <div class="inspect-data-row"><span class="inspect-label">Last Engagement:</span><span class="inspect-val" id="inspect-val-last-touch" style="font-family:'JetBrains Mono', monospace; font-size:12px;">-</span></div>
     </div>
     <div class="inspect-section">
+      <h4 class="inspect-section-title">Interview Track Status Detail</h4>
+      <p id="inspect-val-interview-context" style="font-size:13.5px; line-height:1.5; color: var(--text-main); background: var(--bg-app); border: 1px dashed var(--border-strong); padding: 12px; border-radius: 10px; white-space: pre-wrap; font-weight: 500;"></p>
+    </div>
+    <div class="inspect-section">
       <h4 class="inspect-section-title">Technical Expertise Fields</h4>
       <div class="pill-group" id="inspect-val-skills"></div>
     </div>
@@ -546,8 +547,11 @@
   let rosterViewMode = 'table';
 
   const STAGE_COLORS = {
-    'Sourced': '#9893AA', 'Screened': '#4F46E5', 'Submitted': '#7C3AED',
-    'Interview': '#D97706', 'Offer': '#059669', 'Passive': '#E11D48'
+    'Subbed': '#7C3AED', 'Interview': '#D97706', 'Final_Interview': '#4F46E5', 'Pending_Feedback': '#9893AA'
+  };
+  
+  const STAGE_DISPLAY_NAMES = {
+    'Subbed': 'Subbed', 'Interview': 'Interview', 'Final_Interview': 'Final Interview', 'Pending_Feedback': 'Pending Feedback'
   };
 
   // ─── VAULT ENGINE CORE CONTROLS ────────────────────────────────────────────
@@ -564,7 +568,7 @@
         DB = JSON.parse(raw);
         if (!DB.profiles) DB.profiles = [];
         if (!DB.logs) DB.logs = [];
-        // Migrate legacy single-category profiles to the categories array model
+        
         let migrated = false;
         DB.profiles.forEach(p => {
           if (!Array.isArray(p.categories)) {
@@ -572,6 +576,14 @@
             delete p.category;
             migrated = true;
           }
+          if (!p.interviewContext) {
+            p.interviewContext = '';
+          }
+          
+          // Structural migration check for old stages mapping to new configuration
+          if(['Sourced', 'Screened', 'Submitted'].includes(p.stage)) { p.stage = 'Subbed'; migrated = true; }
+          if(['Offer'].includes(p.stage)) { p.stage = 'Final_Interview'; migrated = true; }
+          if(['Passive'].includes(p.stage)) { p.stage = 'Pending_Feedback'; migrated = true; }
         });
         if (migrated) saveDatabaseState();
       } catch(e) { generateMockDatabase(); }
@@ -584,9 +596,9 @@
     const now = Date.now();
     DB = {
       profiles: [
-        { uuid: 'p1', code: 'J.W.', track: 'Azure Data Engineer', categories: ['loop'], stage: 'Interview', location: 'Vancouver - Hybrid', skills: ['Azure', 'Databricks', 'MLflow'], notes: 'Targeting 140k markers baseline layer operations.', created: now - (2 * 24 * 60 * 60 * 1000), statusChanged: now - (2 * 24 * 60 * 60 * 1000) },
-        { uuid: 'p2', code: 'A.L.', track: 'Cloud Infrastructure Architect', categories: ['loop', 'market'], stage: 'Submitted', location: 'Castlegar - Remote', skills: ['Azure', 'Security', 'DevOps'], notes: 'Open to quick milestone tracking structures.', created: now - (12 * 24 * 60 * 60 * 1000), statusChanged: now - (8 * 24 * 60 * 60 * 1000) },
-        { uuid: 'p3', code: 'C.R.', track: 'Senior DevOps Architect', categories: ['market'], stage: 'Passive', location: 'Nelson - Onsite', skills: ['AWS', 'Kubernetes', 'CI/CD'], notes: 'Top reference pipeline asset, keeping warm.', created: now - (4 * 24 * 60 * 60 * 1000), statusChanged: now - (4 * 24 * 60 * 60 * 1000) }
+        { uuid: 'p1', code: 'J.W.', track: 'Azure Data Engineer', categories: ['loop'], stage: 'Interview', location: 'Vancouver - Hybrid', skills: ['Azure', 'Databricks', 'MLflow'], notes: 'Targeting 140k markers baseline layer operations.', interviewContext: 'First round done. Mid-tier assessment metrics exceeded.', created: now - (2 * 24 * 60 * 60 * 1000), statusChanged: now - (2 * 24 * 60 * 60 * 1000) },
+        { uuid: 'p2', code: 'A.L.', track: 'Cloud Infrastructure Architect', categories: ['loop'], stage: 'Subbed', location: 'Castlegar - Remote', skills: ['Azure', 'Security', 'DevOps'], notes: 'Open to quick milestone tracking structures.', interviewContext: 'Profiles submitted to HM layer. Awaiting feedback loop review.', created: now - (12 * 24 * 60 * 60 * 1000), statusChanged: now - (8 * 24 * 60 * 60 * 1000) },
+        { uuid: 'p3', code: 'C.R.', track: 'Senior DevOps Architect', categories: ['market'], stage: 'Pending_Feedback', location: 'Nelson - Onsite', skills: ['AWS', 'Kubernetes', 'CI/CD'], notes: 'Top reference pipeline asset, keeping warm.', interviewContext: 'Initial discussions logged. Tracking alignment variants.', created: now - (4 * 24 * 60 * 60 * 1000), statusChanged: now - (4 * 24 * 60 * 60 * 1000) }
       ],
       logs: [
         { uuid: 'l1', profileUuid: 'p1', timestamp: now - (1 * 24 * 60 * 60 * 1000), text: 'Initial recruitment technical verification completed.' },
@@ -681,7 +693,7 @@
     const stageAge = getDaysSince(p.statusChanged || p.created || Date.now());
     const lastTouch = getProfileLastTouch(p.uuid);
     const touchAge = lastTouch ? getDaysSince(lastTouch) : 999;
-    const riskScore = (stageAge >= 14 ? 2 : stageAge >= 7 ? 1 : 0) + (touchAge >= 10 ? 2 : touchAge >= 5 ? 1 : 0) + (p.stage === 'Offer' && touchAge >= 2 ? 1 : 0);
+    const riskScore = (stageAge >= 14 ? 2 : stageAge >= 7 ? 1 : 0) + (touchAge >= 10 ? 2 : touchAge >= 5 ? 1 : 0);
 
     if (riskScore >= 3) return { label: 'At Risk', className: 'health-red', icon: '🔴', stageAge, touchAge };
     if (riskScore >= 1) return { label: 'Cooling', className: 'health-yellow', icon: '🟡', stageAge, touchAge };
@@ -692,7 +704,10 @@
     const container = document.getElementById('needs-attention-container');
     if (!container) return;
 
-    const ranked = DB.profiles.map(p => ({ ...p, health: calculateProfileHealth(p) }))
+    // RULE IMPLEMENTED: Top Talent Pool (market) items completely excluded from this viewport.
+    const activeLoopOnly = DB.profiles.filter(p => p.categories.includes('loop') && !p.categories.includes('market'));
+
+    const ranked = activeLoopOnly.map(p => ({ ...p, health: calculateProfileHealth(p) }))
       .sort((a,b) => {
         const healthRank = { 'At Risk': 3, 'Cooling': 2, 'Healthy': 1 };
         return (healthRank[b.health.label] - healthRank[a.health.label]) || (b.health.stageAge - a.health.stageAge);
@@ -700,26 +715,28 @@
       .slice(0, 4);
 
     if (!ranked.length) {
-      container.innerHTML = '<div class="state-empty" style="grid-column:1/-1; padding:18px;"><div class="state-empty-title">No profiles need attention yet</div></div>';
+      container.innerHTML = '<div class="state-empty" style="grid-column:1/-1; padding:18px;"><div class="state-empty-title">No active loop records currently require escalation</div></div>';
       return;
     }
 
     container.innerHTML = ranked.map(p => {
       const lastTouchText = p.health.touchAge === 999 ? 'No touch logged' : `${p.health.touchAge}d since touch`;
       const reason = p.health.label === 'At Risk'
-        ? 'Prioritize this profile because it is getting stale or has not had a recent interaction.'
+        ? 'Stale status duration metrics detected in active loop delivery chain.'
         : p.health.label === 'Cooling'
-          ? 'Worth checking in before the relationship or process loses momentum.'
-          : 'Currently in good shape, but still useful to keep visible.';
+          ? 'Check timeline activity metrics to sustain candidate stream engagement.'
+          : 'Status baseline metrics are currently tracking inside standard SLA levels.';
+      
+      const localizedStageName = STAGE_DISPLAY_NAMES[p.stage] || p.stage;
       return `
         <div class="attention-card" onclick="openInspectSlideout('${p.uuid}')">
           <div class="attention-topline">
             <span class="attention-name" style="display:flex; align-items:center; gap:8px;">${renderAvatar(p.code)}${escapeHtml(p.code)}${renderRosterChips(p)}</span>
             <span class="health-pill ${p.health.className}">${p.health.icon} ${p.health.label}</span>
           </div>
-          <div class="attention-reason">${escapeHtml(p.track)} — ${reason}</div>
-          <div class="attention-meta">
-            <span class="micro-pill">${escapeHtml(p.stage)}</span>
+          <div class="attention-reason"><strong>${escapeHtml(p.track)}</strong><br>${reason}</div>
+          <div class="attention-meta" style="margin-top:12px;">
+            <span class="micro-pill">${escapeHtml(localizedStageName)}</span>
             <span class="micro-pill">${p.health.stageAge}d in stage</span>
             <span class="micro-pill">${lastTouchText}</span>
           </div>
@@ -733,7 +750,7 @@
     
     const addedThisWeek = DB.profiles.filter(p => (p.created || 0) >= sevenDaysAgo).length;
     const activeProfiles = DB.profiles.filter(p => p.categories.includes('loop'));
-    const interviewCount = activeProfiles.filter(p => p.stage === 'Interview').length;
+    const interviewCount = activeProfiles.filter(p => ['Interview', 'Final_Interview'].includes(p.stage)).length;
     const interviewRate = activeProfiles.length ? Math.round((interviewCount / activeProfiles.length) * 100) : 0;
 
     document.getElementById('metric-added-week').innerText = addedThisWeek;
@@ -755,14 +772,14 @@
           <div>
             <span style="font-weight:600;">${escapeHtml(p.code)}</span> ${renderRosterChips(p)}
             <span style="color:var(--text-muted); font-size:13px;">— ${escapeHtml(p.track)}</span>
-            <div style="margin-top:4px;"><span class="badge-stage-pill ${p.stage.toLowerCase()}">${p.stage}</span></div>
+            <div style="margin-top:4px;"><span class="badge-stage-pill ${p.stage.toLowerCase()}">${STAGE_DISPLAY_NAMES[p.stage] || p.stage}</span></div>
           </div>
           <span class="stagnant-alert-days">${p.daysStagnant}d stagnant</span>
         </div>
       `).join('');
     }
 
-    const counts = { Sourced: 0, Screened: 0, Submitted: 0, Interview: 0, Offer: 0, Passive: 0 };
+    const counts = { Subbed: 0, Interview: 0, Final_Interview: 0, Pending_Feedback: 0 };
     DB.profiles.forEach(p => { if(counts[p.stage] !== undefined) counts[p.stage]++; });
     
     const total = DB.profiles.length;
@@ -780,7 +797,7 @@
     let legendHtml = '';
 
     for (const [stage, count] of Object.entries(counts)) {
-      const pct = Math.round((count / total) * 100);
+      const pct = total > 0 ? Math.round((count / total) * 100) : 0;
       if (count > 0) {
         const color = STAGE_COLORS[stage];
         gradientSlices.push(`${color} ${accumulatedPercentage}% ${accumulatedPercentage + pct}%`);
@@ -791,13 +808,18 @@
         <div class="legend-row">
           <div class="legend-lbl-group">
             <div class="legend-dot" style="background:${STAGE_COLORS[stage]};"></div>
-            <span style="color:var(--text-muted); font-weight:500;">${stage}</span>
+            <span style="color:var(--text-muted); font-weight:500;">${STAGE_DISPLAY_NAMES[stage]}</span>
           </div>
           <span style="font-weight:600; color:var(--text-main);">${count} <span style="font-weight:normal; color:var(--text-light); font-size:11px;">(${pct}%)</span></span>
         </div>`;
     }
 
-    chart.style.background = `conic-gradient(${gradientSlices.join(', ')})`;
+    // Fallback if formatting roundings don't equal absolute 100
+    if (gradientSlices.length > 0) {
+       chart.style.background = `conic-gradient(${gradientSlices.join(', ')})`;
+    } else {
+       chart.style.background = 'var(--border)';
+    }
     legend.innerHTML = legendHtml;
   }
 
@@ -823,6 +845,7 @@
       if (query) {
         return (p.code.toLowerCase().includes(query) || p.track.toLowerCase().includes(query) ||
                 p.location.toLowerCase().includes(query) || p.notes.toLowerCase().includes(query) ||
+                (p.interviewContext && p.interviewContext.toLowerCase().includes(query)) ||
                 p.skills.some(s => s.toLowerCase().includes(query)));
       }
       return true;
@@ -853,7 +876,7 @@
         <td><div class="candidate-id-cell">${renderAvatar(p.code)} <span>${escapeHtml(p.code)}</span> ${renderRosterChips(p)}</div></td>
         <td><div class="role-title-text">${escapeHtml(p.track)}</div></td>
         <td><span style="color: var(--text-muted); font-size:13.5px;">${escapeHtml(p.location || 'Unspecified')}</span></td>
-        <td><span class="badge-stage-pill ${p.stage.toLowerCase()}">${escapeHtml(p.stage)}</span></td>
+        <td><span class="badge-stage-pill ${p.stage.toLowerCase()}">${escapeHtml(STAGE_DISPLAY_NAMES[p.stage] || p.stage)}</span></td>
         <td><div class="pill-group">${skillHtml}</div></td>
         <td><span class="health-pill ${calculateProfileHealth(p).className}">${calculateProfileHealth(p).icon} ${calculateProfileHealth(p).label}</span></td>
         <td>
@@ -877,24 +900,29 @@
   function drawPipelineBoardUI(filteredProfiles) {
     const board = document.getElementById('pipeline-board-container');
     if (!board) return;
-    const stages = activeRosterTab === 'market' ? ['Passive', 'Sourced', 'Screened', 'Submitted', 'Interview', 'Offer'] : ['Sourced', 'Screened', 'Submitted', 'Interview', 'Offer'];
+    const stages = ['Subbed', 'Interview', 'Final_Interview', 'Pending_Feedback'];
 
     board.innerHTML = stages.map(stage => {
       const profiles = filteredProfiles.filter(p => p.stage === stage);
       const cards = profiles.map(p => {
         const health = calculateProfileHealth(p);
         const skills = p.skills.slice(0,3).map(s => `<span class="pill-skill">${escapeHtml(s)}</span>`).join('');
+        const contextBlurb = p.interviewContext ? `<div style="margin-top:6px; font-size:11.5px; border-left:2px solid var(--border-strong); padding-left:6px; color:var(--text-muted); font-style:italic; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(p.interviewContext)}</div>` : '';
+        
         return `
           <div class="kanban-card" onclick="openInspectSlideout('${p.uuid}')">
             <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">${renderAvatar(p.code)}<span class="kanban-card-title" style="margin-bottom:0;">${escapeHtml(p.code)}</span>${renderRosterChips(p)}</div>
-            <div class="kanban-card-role">${escapeHtml(p.track)}</div>
-            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">${skills}</div>
-            <span class="health-pill ${health.className}">${health.icon} ${health.label}</span>
+            <div class="kanban-card-role" style="margin-bottom:6px;">${escapeHtml(p.track)}</div>
+            <div style="display:flex; gap:4px; flex-wrap:wrap; margin-bottom:8px;">${skills}</div>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
+               <span class="health-pill ${health.className}">${health.icon} ${health.label}</span>
+            </div>
+            ${contextBlurb}
           </div>`;
-      }).join('') || '<div class="state-empty" style="padding:22px 8px;"><div class="state-empty-title" style="font-size:12px;">Empty</div></div>';
+      }).join('') || '<div class="state-empty" style="padding:22px 8px;"><div class="state-empty-title" style="font-size:12px;">Empty Column</div></div>';
       return `
         <div class="kanban-column">
-          <div class="kanban-header"><span>${stage}</span><span class="kanban-count">${profiles.length}</span></div>
+          <div class="kanban-header"><span>${STAGE_DISPLAY_NAMES[stage]}</span><span class="kanban-count">${profiles.length}</span></div>
           ${cards}
         </div>`;
     }).join('');
@@ -939,16 +967,16 @@
     }
   }
 
-  
   function clearFormFields() {
     document.getElementById('form-profile-uuid').value = '';
     document.getElementById('field-initials').value = '';
     document.getElementById('field-role').value = '';
     document.getElementById('field-cat-loop').checked = (activeRosterTab !== 'market');
     document.getElementById('field-cat-market').checked = (activeRosterTab === 'market');
-    document.getElementById('field-stage').value = (activeRosterTab === 'market') ? 'Passive' : 'Sourced';
+    document.getElementById('field-stage').value = 'Subbed';
     document.getElementById('field-location').value = '';
     document.getElementById('field-skills').value = '';
+    document.getElementById('field-interview-context').value = '';
     document.getElementById('field-notes').value = '';
   }
 
@@ -963,6 +991,7 @@
     const stageVal = document.getElementById('field-stage').value;
     const locVal = document.getElementById('field-location').value.trim() || 'Remote';
     const parsedSkills = document.getElementById('field-skills').value.split(',').map(s => s.trim()).filter(Boolean);
+    const interviewContextVal = document.getElementById('field-interview-context').value.trim();
     const notesVal = document.getElementById('field-notes').value.trim();
     const now = Date.now();
 
@@ -973,14 +1002,16 @@
           existing.statusChanged = now;
         }
         existing.code = codeVal; existing.track = roleVal; existing.categories = catArr;
-        existing.stage = stageVal; existing.location = locVal; existing.skills = parsedSkills; existing.notes = notesVal;
-        DB.logs.push({ uuid: makeUuid(), profileUuid: existing.uuid, timestamp: now, text: `Refined metrics allocation [Track: ${roleVal}, Stage: ${stageVal}].` });
+        existing.stage = stageVal; existing.location = locVal; existing.skills = parsedSkills; 
+        existing.interviewContext = interviewContextVal; existing.notes = notesVal;
+        
+        DB.logs.push({ uuid: makeUuid(), profileUuid: existing.uuid, timestamp: now, text: `Refined metrics allocation [Track: ${roleVal}, Stage: ${STAGE_DISPLAY_NAMES[stageVal]}].` });
       }
     } else {
       const newUuid = makeUuid();
       DB.profiles.push({
         uuid: newUuid, code: codeVal, track: roleVal, categories: catArr, stage: stageVal,
-        location: locVal, skills: parsedSkills, notes: notesVal, created: now, statusChanged: now
+        location: locVal, skills: parsedSkills, notes: notesVal, interviewContext: interviewContextVal, created: now, statusChanged: now
       });
       DB.logs.push({ uuid: makeUuid(), profileUuid: newUuid, timestamp: now, text: 'Initialized system profile configuration layer.' });
     }
@@ -1005,6 +1036,7 @@
     document.getElementById('field-stage').value = p.stage;
     document.getElementById('field-location').value = p.location;
     document.getElementById('field-skills').value = p.skills.join(', ');
+    document.getElementById('field-interview-context').value = p.interviewContext || '';
     document.getElementById('field-notes').value = p.notes;
 
     toggleFormModal(true, "Refine Profile Architecture");
@@ -1033,8 +1065,11 @@
     if (p.categories.includes('loop')) catLabels.push('⚡ Active Loop');
     if (p.categories.includes('market')) catLabels.push('💎 Top Market Talent');
     document.getElementById('inspect-val-category').innerText = catLabels.join(' + ') || 'Unassigned';
-    document.getElementById('inspect-val-stage').innerText = p.stage;
+    document.getElementById('inspect-val-stage').innerText = STAGE_DISPLAY_NAMES[p.stage] || p.stage;
     document.getElementById('inspect-val-location').innerText = p.location;
+    
+    // Set dynamic granular interview tracking data layout values
+    document.getElementById('inspect-val-interview-context').innerText = p.interviewContext || 'No process detail logs mapped to this record yet.';
     document.getElementById('inspect-val-notes').innerText = p.notes || 'No contextual profile constraints outlined.';
     
     document.getElementById('inspect-val-skills').innerHTML = p.skills.map(s => `<span class="pill-skill" style="font-size:12px; padding:4px 8px;">${escapeHtml(s)}</span>`).join('');
